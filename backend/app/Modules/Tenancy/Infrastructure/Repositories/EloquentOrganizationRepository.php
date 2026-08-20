@@ -39,9 +39,6 @@ class EloquentOrganizationRepository implements OrganizationRepositoryInterface
 
     public function forUser(User $user): Collection
     {
-        return Organization::whereHas(
-            'memberships',
-            fn ($query) => $query->where('user_id', $user->id)->where('status', 'active'),
-        )->get();
+        return $user->organizations()->wherePivot('status', 'active')->get();
     }
 }

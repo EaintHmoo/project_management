@@ -29,6 +29,7 @@ export interface TaskLabel {
 
 export interface TaskSummary {
   id: number;
+  project_id: number;
   title: string;
   status: string;
   priority: string;

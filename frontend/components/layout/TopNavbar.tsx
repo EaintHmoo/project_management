@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useLogout } from "@/features/auth";
+import { NotificationBell } from "@/features/notifications";
+import { OrganizationSwitcher } from "@/features/organizations";
 import { useAuthStore } from "@/stores/authStore";
 
 export function TopNavbar() {
@@ -24,6 +26,8 @@ export function TopNavbar() {
           <h2 className="mt-1 text-2xl font-bold text-[#18201f]">Project command center</h2>
         </div>
         <div className="flex items-center gap-3">
+          <OrganizationSwitcher />
+          <NotificationBell />
           {user && <span className="hidden text-sm font-medium text-[#4f5f58] sm:inline">{user.name}</span>}
           <Button variant="secondary" size="sm" isLoading={logoutMutation.isPending} onClick={onSignOut}>
             Sign out

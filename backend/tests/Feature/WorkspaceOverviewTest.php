@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use App\Modules\Tenancy\Domain\Models\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,7 +15,12 @@ class WorkspaceOverviewTest extends TestCase
     {
         $this->seed();
 
-        $response = $this->getJson('/api/workspace/overview');
+        $alice = User::where('email', 'alice@example.com')->firstOrFail();
+        $organization = Organization::where('slug', 'nexus-collaboration')->firstOrFail();
+
+        $response = $this->actingAs($alice)
+            ->withHeader('X-Organization-Id', (string) $organization->id)
+            ->getJson('/api/workspace/overview');
 
         $response
             ->assertOk()
@@ -34,5 +41,32 @@ class WorkspaceOverviewTest extends TestCase
                     'meetings',
                 ],
             ]);
+    }
+
+    public function test_workspace_overview_requires_authentication(): void
+    {
+        $this->getJson('/api/workspace/overview')->assertUnauthorized();
+    }
+
+    public function test_workspace_overview_requires_an_organization_header(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->getJson('/api/workspace/overview')
+            ->assertStatus(400);
+    }
+
+    public function test_workspace_overview_rejects_non_members(): void
+    {
+        $this->seed();
+
+        $outsider = User::factory()->create();
+        $organization = Organization::where('slug', 'nexus-collaboration')->firstOrFail();
+
+        $this->actingAs($outsider)
+            ->withHeader('X-Organization-Id', (string) $organization->id)
+            ->getJson('/api/workspace/overview')
+            ->assertForbidden();
     }
 }

@@ -1,0 +1,45 @@
+.meeting-calendar {
+  --fc-border-color: #ded7ca;
+  --fc-page-bg-color: #fffcf4;
+  --fc-neutral-bg-color: #ece3d2;
+  --fc-list-event-hover-bg-color: #efe8da;
+  --fc-today-bg-color: #f3ecd8;
+  --fc-button-bg-color: #ffffff;
+  --fc-button-border-color: #d8cfbd;
+  --fc-button-text-color: #18201f;
+  --fc-button-hover-bg-color: #efe8da;
+  --fc-button-hover-border-color: #d8cfbd;
+  --fc-button-active-bg-color: #12312b;
+  --fc-button-active-border-color: #12312b;
+  font-family: inherit;
+}
+
+.meeting-calendar .fc-button {
+  text-transform: capitalize;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+
+.meeting-calendar .fc-button-primary:not(:disabled).fc-button-active {
+  color: #fff;
+}
+
+.meeting-calendar .fc-toolbar-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #18201f;
+}
+
+.meeting-calendar .fc-event {
+  border: none;
+  cursor: pointer;
+}
+
+.meeting-calendar .fc-daygrid-event {
+  padding: 1px 4px;
+}
+
+.meeting-calendar .fc-event.meeting-cancelled {
+  opacity: 0.5;
+  text-decoration: line-through;
+}

@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Projects", href: "#" },
-  { label: "Tasks", href: "#" },
-  { label: "Calendar", href: "#" },
+  { label: "Notifications", href: "/notifications" },
+  { label: "Projects", href: "/projects" },
+  { label: "Teams", href: "/teams" },
+  { label: "Meetings", href: "/meetings" },
+  { label: "Invitations", href: "/invitations" },
   { label: "Files", href: "#" },
   { label: "Analytics", href: "#" },
-  { label: "Settings", href: "#" },
+  { label: "Settings", href: "/settings/organization" },
 ];
 
 export function Sidebar() {
@@ -25,7 +27,7 @@ export function Sidebar() {
 
       <nav className="grid gap-1 text-sm font-medium text-[#4f5f58]">
         {NAV_ITEMS.map((item) => {
-          const isActive = item.href !== "#" && pathname === item.href;
+          const isActive = item.href !== "#" && (pathname === item.href || pathname.startsWith(`${item.href}/`));
           const isDisabled = item.href === "#";
 
           return (

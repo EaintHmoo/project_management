@@ -6,24 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Modules\Meetings\Domain\Models\Meeting;
 use App\Modules\Projects\Domain\Models\Project;
 use App\Modules\Tasks\Domain\Models\Task;
-use App\Modules\Tenancy\Domain\Models\Organization;
+use App\Modules\Tenancy\Domain\Contracts\TenantContext;
 use Illuminate\Http\JsonResponse;
 
 class WorkspaceOverviewController extends Controller
 {
-    public function __invoke(): JsonResponse
+    public function __invoke(TenantContext $tenant): JsonResponse
     {
-        $organization = Organization::query()
-            ->withCount(['members', 'projects'])
-            ->first();
-
-        if (! $organization) {
-            return response()->json([
-                'success' => true,
-                'data' => null,
-                'message' => 'Workspace has not been seeded yet.',
-            ]);
-        }
+        $organization = $tenant->organization()->loadCount(['members', 'projects']);
 
         $tasksByStatus = Task::query()
             ->where('organization_id', $organization->id)

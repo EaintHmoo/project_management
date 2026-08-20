@@ -8,6 +8,7 @@ use App\Modules\Auth\Domain\Exceptions\TwoFactorResendCooldownException;
 use App\Modules\Auth\Domain\Models\TwoFactorChallenge;
 use App\Modules\Auth\Infrastructure\TwoFactor\Notifications\TwoFactorCodeNotification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class EmailOtpProvider
 {
@@ -30,7 +31,10 @@ class EmailOtpProvider
         }
 
         $code = (string) random_int(100000, 999999);
-
+        Log::info('Verification code: ', [
+            'user_id' => $user->id,
+            'code' => $code,
+        ]);
         $challenge = TwoFactorChallenge::create([
             'user_id' => $user->id,
             'code_hash' => Hash::make($code),

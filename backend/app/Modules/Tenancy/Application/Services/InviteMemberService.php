@@ -5,6 +5,7 @@ namespace App\Modules\Tenancy\Application\Services;
 use App\Models\User;
 use App\Modules\Tenancy\Domain\DTOs\InviteMemberData;
 use App\Modules\Tenancy\Domain\Enums\MembershipStatus;
+use App\Modules\Tenancy\Domain\Events\MemberInvited;
 use App\Modules\Tenancy\Domain\Models\Organization;
 use App\Modules\Tenancy\Domain\Models\OrganizationMember;
 use Illuminate\Validation\ValidationException;
@@ -27,12 +28,16 @@ final class InviteMemberService
             ]);
         }
 
-        return $organization->memberships()->create([
+        $membership = $organization->memberships()->create([
             'user_id' => $invitee->id,
             'role' => $data->role,
             'status' => MembershipStatus::Invited,
             'invited_by_id' => $data->invitedById,
             'invited_at' => now(),
         ]);
+
+        MemberInvited::dispatch($membership);
+
+        return $membership;
     }
 }

@@ -117,7 +117,7 @@ class TaskController extends Controller
     {
         $this->authorize('assign', $task);
 
-        $task = $service->execute($task, $request->input('assignee_id'));
+        $task = $service->execute($task, $request->input('assignee_id'), $request->user()->id);
 
         return response()->json([
             'success' => true,

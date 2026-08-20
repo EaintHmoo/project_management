@@ -23,12 +23,14 @@ class Meeting extends Model
         'recurrence_rule',
         'video_room_provider',
         'video_room_id',
+        'reminder_sent_at',
     ];
 
     protected $casts = [
         'status' => MeetingStatus::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'reminder_sent_at' => 'datetime',
     ];
 
     /**

@@ -25,12 +25,14 @@ class Task extends Model
         'priority',
         'due_at',
         'position',
+        'overdue_notified_at',
     ];
 
     protected $casts = [
         'status' => TaskStatus::class,
         'priority' => TaskPriority::class,
         'due_at' => 'datetime',
+        'overdue_notified_at' => 'datetime',
     ];
 
     public function organization(): BelongsTo

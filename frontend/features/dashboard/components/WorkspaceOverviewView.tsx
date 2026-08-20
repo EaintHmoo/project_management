@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { useWorkspaceOverview } from "@/features/dashboard/hooks/useWorkspaceOverview";
+import { useCurrentOrganization } from "@/features/organizations";
 
 const KANBAN_COLUMNS = [
   { key: "todo", label: "Todo" },
@@ -11,10 +13,22 @@ const KANBAN_COLUMNS = [
 ];
 
 export function WorkspaceOverviewView() {
-  const { data, isLoading, isError } = useWorkspaceOverview();
+  const { organizationId, isLoading: isOrganizationLoading } = useCurrentOrganization();
+  const { data, isLoading, isError } = useWorkspaceOverview(organizationId);
 
-  if (isLoading) {
+  if (isOrganizationLoading || isLoading) {
     return <p className="text-sm text-[#66746e]">Loading workspace…</p>;
+  }
+
+  if (!organizationId) {
+    return (
+      <Card>
+        <h3 className="text-lg font-bold">No workspace yet</h3>
+        <p className="mt-2 text-sm text-[#66746e]">
+          Create an organization from the switcher in the top bar to get started with projects, tasks, and meetings.
+        </p>
+      </Card>
+    );
   }
 
   if (isError) {
@@ -71,7 +85,11 @@ export function WorkspaceOverviewView() {
                   </div>
                   <div className="grid gap-3">
                     {tasks.map((task) => (
-                      <article key={task.id} className="rounded-lg border border-[#ded7ca] bg-white p-3">
+                      <Link
+                        key={task.id}
+                        href={`/projects/${task.project_id}`}
+                        className="block rounded-lg border border-[#ded7ca] bg-white p-3 transition-colors hover:border-[#12312b]"
+                      >
                         <h5 className="text-sm font-bold leading-5">{task.title}</h5>
                         {task.labels.length > 0 && (
                           <div className="mt-3 flex flex-wrap gap-1">
@@ -90,7 +108,7 @@ export function WorkspaceOverviewView() {
                             Assigned to {task.assignee.name}
                           </p>
                         )}
-                      </article>
+                      </Link>
                     ))}
                     {tasks.length === 0 && <p className="text-xs text-[#9aa39c]">No tasks</p>}
                   </div>
@@ -104,12 +122,14 @@ export function WorkspaceOverviewView() {
           <h3 className="mb-3 text-xl font-bold">Upcoming meetings</h3>
           <div className="grid gap-3">
             {data.meetings.map((meeting) => (
-              <Card key={meeting.id}>
-                <h4 className="font-bold">{meeting.title}</h4>
-                <p className="mt-1 text-sm text-[#66746e]">
-                  {new Date(meeting.starts_at).toLocaleString()}
-                </p>
-              </Card>
+              <Link key={meeting.id} href={`/meetings/${meeting.id}`}>
+                <Card className="transition-colors hover:border-[#12312b]">
+                  <h4 className="font-bold">{meeting.title}</h4>
+                  <p className="mt-1 text-sm text-[#66746e]">
+                    {new Date(meeting.starts_at).toLocaleString()}
+                  </p>
+                </Card>
+              </Link>
             ))}
             {data.meetings.length === 0 && <p className="text-sm text-[#9aa39c]">No upcoming meetings</p>}
           </div>
@@ -120,14 +140,16 @@ export function WorkspaceOverviewView() {
         <h3 className="mb-3 text-xl font-bold">Projects</h3>
         <div className="grid gap-3">
           {data.projects.map((project) => (
-            <Card key={project.id} className="flex items-center justify-between">
-              <div>
-                <h4 className="font-bold">{project.name}</h4>
-                <p className="text-sm text-[#66746e]">
-                  {project.status} · {project.tasks_count} tasks
-                </p>
-              </div>
-            </Card>
+            <Link key={project.id} href={`/projects/${project.id}`}>
+              <Card className="flex items-center justify-between transition-colors hover:border-[#12312b]">
+                <div>
+                  <h4 className="font-bold">{project.name}</h4>
+                  <p className="text-sm text-[#66746e]">
+                    {project.status} · {project.tasks_count} tasks
+                  </p>
+                </div>
+              </Card>
+            </Link>
           ))}
         </div>
       </section>
